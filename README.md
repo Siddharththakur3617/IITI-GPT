@@ -2,7 +2,8 @@
 
 An intelligent assistant web app tailored for **IIT Indore**, integrating a conversational chatbot, user login, reminder system, and navigation. The chatbot is powered by **Cohere’s Large Language Model (LLM)** and enhanced with real-time information retrieval using the **Tavily Search API**.
 
-![Chatbot Screenshot](https://github.com/Siddharththakur3617/IITI-GPT/blob/main/assets/chatbot_demo.jpg)
+![HomePage Screenshot](https://github.com/Siddharththakur3617/IITI-GPT/blob/main/assets/home_demo.jpg)
+![Chatbot Screenshot](https://github.com/Siddharththakur3617/IITI-GPT/blob/main/assets/chatbot_demo2.jpg)
 ![Reminder Screenshot](https://github.com/Siddharththakur3617/IITI-GPT/blob/main/assets/reminder_demo.jpg)
 
 ---
