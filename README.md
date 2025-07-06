@@ -68,7 +68,7 @@ Create a `.env` file in your root directory with the following:
 ```env
 COHERE_API_KEY=your_cohere_key
 TAVILY_API_KEY=your_tavily_key
-
+```
 ## 🧪 Setup Instructions
 
 ### 1. Clone the Repository
@@ -76,24 +76,27 @@ TAVILY_API_KEY=your_tavily_key
 ```bash
 git clone https://github.com/Siddharththakur3617/IITI-GPT.git
 cd IITI-GPT
-
+```
 
 ### 2. Set up Virtual Environment
 
 ```bash
 git clone https://github.com/Siddharththakur3617/IITI-GPT.git
 cd IITI-GPT
+```
 
 ### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
+```
 
 ### 4. Apply Migrations
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
+```
 
 ### 4. Run the Server
 
