@@ -131,3 +131,5 @@ Then open your browser and go to: http://127.0.0.1:8000/
 
 - **Siddharth Singh** – [@Siddharththakur3617](https://github.com/Siddharththakur3617)
 - **Abhitulya Mishra** – [@Abhitulya](https://github.com/Abhitulya)
+- **Ayush Jindal** - [@Ayush15Jindal(https://github.com/Ayush15Jindal)]
+ 
