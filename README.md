@@ -14,6 +14,7 @@ An intelligent assistant web app tailored for **IIT Indore**, integrating a conv
 - Secure login/logout functionality with session tracking.
 - Redirects unauthenticated users appropriately.
 
+
 ### 💬 AI-Powered Chatbot
 - Uses **Cohere LLM** for natural and intelligent responses.
 - Integrates **Tavily Search API** for up-to-date, contextually relevant web results.
