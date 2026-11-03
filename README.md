@@ -1,5 +1,9 @@
 # IITI GPT
 
+<img width="1916" height="911" alt="image" src="https://github.com/user-attachments/assets/a837b989-88c8-49b2-aa9d-1e7303f4401d" />
+<img width="1916" height="911" alt="image" src="https://github.com/user-attachments/assets/de5fa1a2-5615-4720-a7d3-ce22e5586c44" />
+<img width="1917" height="877" alt="image" src="https://github.com/user-attachments/assets/d4b154a6-5e5f-4819-8175-bbff18ac4e92" />
+<img width="1901" height="901" alt="image" src="https://github.com/user-attachments/assets/8515f957-1000-4591-a469-b6cb95dc214f" />
 A campus assistant for IIT Indore. It has a chatbot that answers from PDF documents, the web, or general knowledge, and a campus map with walking routes.
 
 **Tech:** Django · SQLite · LangGraph · Cohere · ChromaDB · Tavily · Folium · OSRM
