@@ -1,40 +1,6 @@
-# Python cache files
-__pycache__/
-*.py[cod]
-*.so
-
-# Environment variables
 .env
-
-# Logs
-*.log
-
-# SQLite database
+.venv/
+__pycache__/
 db.sqlite3
-
-# Django specific
-*.pot
-*.pyc
-*.pyo
-*.pyd
-
-# Media and static files
-media/
-staticfiles/
-
-# VSCode and PyCharm settings (optional)
+chroma_db/
 .vscode/
-.idea/
-
-# Test-related
-.pytest_cache/
-coverage/
-htmlcov/
-
-# Migrations (optional to ignore if generated)
-**/migrations/__pycache__/
-**/migrations/*.py[cod]
-
-# System files
-.DS_Store
-Thumbs.db

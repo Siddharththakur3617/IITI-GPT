@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IITI GPT</title>
+  <style>
+    :root { --accent: #2f5bea; --bg: #f4f6fb; --card: #fff; --text: #1f2330; --muted: #6b7080; --border: #e2e5ee; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+    header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 20px; padding: 12px 24px;
+             background: var(--card); border-bottom: 1px solid var(--border); }
+    .logo { font-weight: 700; font-size: 18px; color: var(--accent); margin-right: auto; }
+    header a { color: var(--muted); text-decoration: none; font-weight: 500; }
+    header a:hover, header a.active { color: var(--accent); }
+    header form { margin: 0; }
+    main { max-width: 820px; margin: 24px auto; padding: 0 16px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+    input { font: inherit; width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
+    input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+    button { font: inherit; font-weight: 500; padding: 10px 18px; border: 0; border-radius: 10px; background: var(--accent);
+             color: #fff; cursor: pointer; white-space: nowrap; }
+    button:hover { filter: brightness(1.1); }
+    button:disabled { opacity: .6; cursor: wait; }
+    .link { background: none; color: var(--muted); padding: 0; }
+    .link:hover { color: var(--accent); }
+    .muted { color: var(--muted); font-size: 14px; }
+    .error { color: #c62828; font-size: 14px; margin: 4px 0; }
+    {% block style %}{% endblock %}
+  </style>
+</head>
+<body>
+  {% if user.is_authenticated %}
+  <header>
+    <span class="logo">IITI GPT</span>
+    <a href="{% url 'chat' %}" {% if request.resolver_match.url_name == 'chat' %}class="active"{% endif %}>Chatbot</a>
+    <a href="{% url 'navigation' %}" {% if request.resolver_match.url_name == 'navigation' %}class="active"{% endif %}>Navigation</a>
+    <span class="muted">{{ user.username }}</span>
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link">Logout</button></form>
+  </header>
+  {% endif %}
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>

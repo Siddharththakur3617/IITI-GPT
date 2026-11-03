@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block style %}
+  .auth { max-width: 380px; margin: 10vh auto 0; }
+  .auth h1 { margin: 0 0 4px; color: var(--accent); }
+  .auth label { display: block; margin-top: 14px; font-size: 14px; font-weight: 500; }
+  .auth label input { margin-top: 6px; }
+  .auth button { width: 100%; margin-top: 20px; }
+  .auth p.switch { text-align: center; }
+{% endblock %}
+{% block content %}
+<div class="card auth">
+  <h1>IITI GPT</h1>
+  <p class="muted">{{ title }} to your campus assistant</p>
+  <form method="post">
+    {% csrf_token %}
+    {% for e in form.non_field_errors %}<p class="error">{{ e }}</p>{% endfor %}
+    {% for field in form %}
+      <label>{{ field.label }}{{ field }}</label>
+      {% for e in field.errors %}<p class="error">{{ e }}</p>{% endfor %}
+    {% endfor %}
+    <button>{{ title }}</button>
+  </form>
+  {% if title == "Login" %}
+    <p class="switch muted">No account? <a href="{% url 'signup' %}">Sign up</a></p>
+  {% else %}
+    <p class="switch muted">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+  {% endif %}
+</div>
+{% endblock %}

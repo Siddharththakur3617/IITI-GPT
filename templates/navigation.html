@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block style %}
+  .card h2 { margin-top: 0; }
+  .route { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+  .place { position: relative; flex: 1; min-width: 180px; }
+  .suggest { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 2; max-height: 320px; overflow-y: auto;
+             background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 30px rgba(20, 30, 60, .12); }
+  .group { padding: 10px 14px 4px; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .item { padding: 8px 14px 8px 22px; cursor: pointer; }
+  .item:hover, .item.active { background: var(--bg); color: var(--accent); }
+  .empty { padding: 12px 14px; color: var(--muted); font-size: 14px; }
+  .info { margin: 16px 0 8px; padding: 10px 14px; background: var(--bg); border-radius: 10px; }
+  iframe { width: 100%; height: 480px; border: 1px solid var(--border); border-radius: 12px; }
+{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Campus Navigation</h2>
+  <p class="muted">Walking routes around IIT Indore. Click a box or start typing to pick a place.</p>
+  <form class="route">
+    <div class="place"><input name="start" value="{{ start }}" placeholder="From, e.g. VSB Hostel" autocomplete="off" required><div class="suggest" hidden></div></div>
+    <div class="place"><input name="end" value="{{ end }}" placeholder="To, e.g. LHC" autocomplete="off" required><div class="suggest" hidden></div></div>
+    <button>Show route</button>
+  </form>
+  {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  {% if map_html %}
+    <p class="info">🟢 <b>{{ start }}</b> → 🔴 <b>{{ end }}</b> · {{ info }}</p>
+    <iframe srcdoc="{{ map_html }}"></iframe>
+  {% endif %}
+</div>
+{{ places|json_script:"places" }}
+<script>
+  const places = JSON.parse(document.getElementById("places").textContent);  // [[group, name], ...]
+  for (const input of document.querySelectorAll(".place input")) {
+    const box = input.nextElementSibling;
+    const show = () => {
+      const q = input.value.toLowerCase().trim();
+      let html = "", group = "";
+      for (const [g, name] of places) {
+        if (!name.toLowerCase().includes(q)) continue;
+        if (g !== group) html += `<div class="group">${group = g}</div>`;
+        html += `<div class="item">${name}</div>`;
+      }
+      box.innerHTML = html || '<div class="empty">No exact match. Show route will pick the closest place.</div>';
+      box.hidden = false;
+    };
+    const pick = (item) => { input.value = item.textContent; box.hidden = true; };
+    input.onfocus = input.oninput = show;
+    input.onblur = () => (box.hidden = true);
+    box.onmousedown = (e) => { e.preventDefault(); if (e.target.classList.contains("item")) pick(e.target); };
+    // Keyboard: ↑/↓ to move, Enter to choose
+    input.onkeydown = (e) => {
+      const items = [...box.querySelectorAll(".item")], current = box.querySelector(".active");
+      let i = items.indexOf(current);
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (box.hidden) show();
+        i = e.key === "ArrowDown" ? Math.min(i + 1, items.length - 1) : Math.max(i - 1, 0);
+        current?.classList.remove("active");
+        items[i]?.classList.add("active");
+        items[i]?.scrollIntoView({ block: "nearest" });
+      } else if (e.key === "Enter" && current && !box.hidden) {
+        e.preventDefault();
+        pick(current);
+      } else if (e.key === "Escape") {
+        box.hidden = true;
+      }
+    };
+  }
+</script>
+{% endblock %}

@@ -1,136 +1,83 @@
-# 🧠 IITI-GPT
+# IITI GPT
 
-An intelligent assistant web app tailored for **IIT Indore**, integrating a conversational chatbot, user login, reminder system, and navigation. The chatbot is powered by **Cohere’s Large Language Model (LLM)** and enhanced with real-time information retrieval using the **Tavily Search API**.
+A campus assistant for IIT Indore. It has a chatbot that answers from PDF documents, the web, or general knowledge, and a campus map with walking routes.
 
-![HomePage Screenshot](https://github.com/Siddharththakur3617/IITI-GPT/blob/main/assets/home_demo.jpg)
-![Chatbot Screenshot](https://github.com/Siddharththakur3617/IITI-GPT/blob/main/assets/chatbot_demo2.jpg)
-![Reminder Screenshot](https://github.com/Siddharththakur3617/IITI-GPT/blob/main/assets/reminder_demo.jpg)
+**Tech:** Django · SQLite · LangGraph · Cohere · ChromaDB · Tavily · Folium · OSRM
 
----
+## Features
 
-## 🚀 Features
+- **Accounts:** sign up, log in and log out with Django's built-in auth. Passwords are hashed and stored in SQLite.
+- **Chatbot:** a LangGraph pipeline that picks the best source for each question.
+- **Chat memory:** remembers your last 5 questions and answers, so follow-ups like "who coordinated it?" work.
+- **Campus navigation:** pick two of 57 campus places from a searchable list and see the walking route, distance and time on a map.
 
-### ✅ User Authentication
-- Secure login/logout functionality with session tracking.
-- Redirects unauthenticated users appropriately.
+## How the chatbot works
 
-
-### 💬 AI-Powered Chatbot
-- Uses **Cohere LLM** for natural and intelligent responses.
-- Integrates **Tavily Search API** for up-to-date, contextually relevant web results.
-- Handles campus-specific questions (e.g., hostels, emergency numbers).
-
-### ⏰ Smart Reminder System
-- Users can create reminders with custom text and datetime.
-- Stores and displays reminders with real-time notification support.
-
-### 🧭 Navigation System
-- Clean user interface with Bootstrap-based routing between Home, Chatbot, and Reminder modules.
-
----
-
-## 🛠️ Tech Stack
-
-| Category         | Technologies Used                                      |
-|------------------|--------------------------------------------------------|
-| **Frontend**     | HTML, CSS, JavaScript, Bootstrap                       |
-| **Backend**      | Django (Python Framework)                              |
-| **Database**     | SQLite (Default Django DB)                             |
-| **Authentication** | Django’s built-in auth system                         |
-| **Chatbot Logic**| Cohere LLM, Tavily Search API, custom routing logic    |
-| **Notifications**| Browser Notification API (for reminders)               |
-| **Deployment**   | Localhost / Deployable on Heroku, Render, etc.         |
-
----
-
-## 🧩 Project Structure
-
-IITI-GPT/
-│
-├── chatbot/ # Handles AI logic, prompts, and views
-├── reminders/ # Reminder app with models and views
-├── users/ # Handles user authentication
-├── static/ # JS, CSS, and other static files
-├── templates/ # HTML templates
-├── IITI_GPT/ # Django project settings and URLs
-├── db.sqlite3 # SQLite database
-├── requirements.txt # Python dependencies
-├── manage.py # Django management script
-└── README.md # Project documentation
-
-## 🔌 API Keys & Configuration
-
-### 🔐 Required Keys:
-- **Cohere API Key**: For LLM-powered responses.
-- **Tavily Search API Key**: For web search augmentation.
-
-### 📁 Add `.env` file:
-Create a `.env` file in your root directory with the following:
-```env
-COHERE_API_KEY=your_cohere_key
-TAVILY_API_KEY=your_tavily_key
 ```
-## 🧪 Setup Instructions
+START → Query formation → Query router ─┬→ Web search (Tavily) → Check → LLM ─┐
+                                         ├→ Database (ChromaDB, your PDFs) → LLM ┼→ Hallucination check → END
+                                         └→ Direct LLM ─────────────────────────┘         │
+                                         ↑                                                │
+                                         └──────── answer doesn't fit (up to 3 tries) ────┘
+```
 
-### 1. Clone the Repository
+1. **Query formation:** rewrites follow-up questions using the chat history, and splits a question that asks several things into sub-questions.
+2. **Query router:** an LLM picks a method for each sub-question: web search for current information, the PDF database for IIT Indore topics, or a direct LLM answer.
+3. **Web search → Check:** searches with Tavily. If nothing comes back, the LLM answers without web context.
+4. **Database:** semantic search over the PDFs in `data/`, embedded with Cohere into ChromaDB.
+5. **Hallucination check:** checks whether the answer actually answers the question. If it doesn't, the question goes back to the router, up to 3 times.
+
+## Setup
+
+**1. Clone and install** (Python 3.11+):
 
 ```bash
 git clone https://github.com/Siddharththakur3617/IITI-GPT.git
 cd IITI-GPT
-```
-
-### 2. Set up Virtual Environment
-
-```bash
-git clone https://github.com/Siddharththakur3617/IITI-GPT.git
-cd IITI-GPT
-```
-
-### 3. Install Dependencies
-
-```bash
+python -m venv .venv
+.venv\Scripts\activate          # macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Apply Migrations
+**2. Add API keys.** Create a file named `.env` in the project folder:
 
-```bash
-python manage.py makemigrations
-python manage.py migrate
+```
+COHERE_API_KEY=your-cohere-key
+TAVILY_API_KEY=your-tavily-key
 ```
 
-### 4. Run the Server
+Get the keys from [dashboard.cohere.com](https://dashboard.cohere.com/api-keys) and [app.tavily.com](https://app.tavily.com/). Never commit `.env`.
+
+**3. Create the database and run:**
 
 ```bash
+python manage.py migrate
 python manage.py runserver
 ```
-Then open your browser and go to: http://127.0.0.1:8000/
 
-## 📅 Planned Enhancements
+Open http://127.0.0.1:8000/signup/ and create an account.
 
-- 🧠 **University Database Integration**  
-  Connect to official IIT Indore databases for real-time, authenticated information.
+On the first run, the PDFs in `data/` are embedded into `chroma_db/`. This takes a moment.
 
-- 🌐 **Multilingual Support**  
-  Enable chatbot interactions in multiple Indian and global languages for wider accessibility.
+## Adding documents
 
-- 📅 **Google Calendar Sync**  
-  Automatically sync user-created reminders with their Google Calendar accounts.
+Put PDF files in `data/` and restart the server. New files are loaded automatically. If you edit or delete a PDF, delete the `chroma_db/` folder and restart, so the database is rebuilt.
 
-- 🗣️ **Voice Interaction Features**  
-  Add support for voice-based question input and text-to-speech (TTS) responses.
+## Project structure
 
-- 📈 **Admin Analytics Dashboard**  
-  Track chatbot usage metrics, popular queries, and user engagement via a dedicated dashboard.
+```
+├── pipeline.py        # LangGraph chatbot pipeline
+├── navigation.py      # campus places + walking routes
+├── urls.py            # pages: signup, login, logout, chat, navigation
+├── settings.py        # Django settings (SQLite)
+├── manage.py
+├── templates/         # base, chat, login/signup form, navigation pages
+├── data/              # PDFs for the chatbot's database
+└── requirements.txt
+```
 
-- 📱 **Progressive Web App (PWA)**  
-  Convert the application into a mobile-friendly PWA for offline use and push notifications.
+## Notes
 
----
-
-## 🤝 Contributors
-
-- **Siddharth Singh** – [@Siddharththakur3617](https://github.com/Siddharththakur3617)
-- **Abhitulya Mishra** – [@Abhitulya](https://github.com/Abhitulya)
-- **Ayush Jindal** - [@Ayush15Jindal](https://github.com/Ayush15Jindal)
-- **Prateek Rajput** - [@prateekrajput9](https://github.com/prateekrajput9)
+- Walking routes come from the free OSRM server at routing.openstreetmap.de, using OpenStreetMap data. If it's unavailable, the map shows a straight line instead.
+- Campus coordinates come from [Monik17/IITI-GPT](https://github.com/Monik17/IITI-GPT). A few of them, such as the bus stop and the sports complex, may need checking.
+- `settings.py` uses a development `SECRET_KEY` and `DEBUG = True`. Change both before deploying.
