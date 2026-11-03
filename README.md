@@ -79,5 +79,5 @@ Put PDF files in `data/` and restart the server. New files are loaded automatica
 ## Notes
 
 - Walking routes come from the free OSRM server at routing.openstreetmap.de, using OpenStreetMap data. If it's unavailable, the map shows a straight line instead.
-- Campus coordinates come from [Monik17/IITI-GPT](https://github.com/Monik17/IITI-GPT). A few of them, such as the bus stop and the sports complex, may need checking.
+
 - `settings.py` uses a development `SECRET_KEY` and `DEBUG = True`. Change both before deploying.
